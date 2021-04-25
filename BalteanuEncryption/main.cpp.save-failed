@@ -1,0 +1,130 @@
+//Encryption Assignment
+//Ana Balteanu
+
+/* RETURNS
+if return 1: code in text file is longer than 60 chars
+if return 2: Message is not in all uppercase
+if return 3: keyword is too long(longer than 6 chars)
+*/
+
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <string.h>
+
+using namespace std;
+
+//prototyping
+void removeSpaces (char * word);
+void removeSpecChar (char * word);
+int checkFiles (ifstream& File);
+int checkInput(int length, char * word);
+
+int main() {
+
+
+    ifstream dataFile("Input1.txt");
+    ofstream outputFile;
+    outputFile.open("output.txt");
+    checkFiles(dataFile);
+    if (!outputFile.is_open() ) {
+        cout << "Unable to open file" << endl;
+        return 1;
+    }
+
+
+    char keyword[7] = "";
+
+    //reading key from file
+    dataFile >> keyword;
+    cout << keyword << endl;
+    checkInput(6, keyword);
+    removeSpaces(keyword);
+    removeSpecChar(keyword);
+
+    char code[61] = "";
+
+    //reading word to be encoded from file
+    while(!dataFile.eof()) {
+        dataFile >> code[strlen(code)];
+    }
+
+    //makes sure that message is 60 or under chars
+    checkInput(60, code);
+    removeSpaces(code);
+    removeSpecChar(code);
+
+    //endcoding code
+    for (int i = 0; i < strlen(code); i++) {
+        code[i] = (code[i] - 65 + keyword[i % strlen(keyword)] - 65) % 26 + 65;
+        cout << code[i] << endl;
+        //cout << keyword[i % strlen(keyword)] << endl;
+    }
+
+    return 0;
+}
+
+void removeSpaces (char * word){
+    //This function removes any spaces in a line
+    if (word == NULL){
+        return;
+    }
+
+    int n = 0;
+
+    for(int i = 0; i < strlen(word); ++i){
+        if (word[i] != ' '){
+            word[n++] = word[i];  //keeping track of non-space locations, keeping everything but spaces in output
+        }
+
+    }
+
+    word[n] = '\0';
+}
+
+void removeSpecChar (char * word){
+    //This function removes any characters other than the alphabet from the text
+    if (word == NULL){
+        return;
+    }
+
+    int n = 0;
+
+    for(int i = 0; i < strlen(word); ++i){
+        if ((word[i] >= 'a' && word[i]<='z') || (word[i] >= 'A' && word[i]<='Z')){
+            word[n++] = word[i];  //keeping track of non-space locations, keeping everything but spaces in output
+        }
+    }
+
+    word[n] = '\0';
+}
+
+int checkFiles (ifstream& File){
+
+    if (!File.is_open() ) {
+        cout << "Unable to open file" << endl;
+        return 1;
+    }else {
+        return 0;
+    }
+}
+
+int checkInput(int length, char * word){
+    //function checks if input is up to standards (does not hit max length or have any lowercase chars)
+    //checking that keyword is 6 or less characters
+    if (strlen(word) <= length){
+        for (int i = 0; i < strlen(word); i++){
+            //checking if word is lowercase, and if not turning it into uppercase
+            if (islower(word[i])) {
+                cout << "Message and keyword need to be in all uppercase letters";
+                return 2;
+                //here, I could also choose to turn lowercase letters into uppercase letters using function:
+                //word[i] = toupper(word[i]);
+            }
+
+        }
+    } else {
+        cout << "Keyword or Message is too long." << endl;
+        return 3;
+    }
+}

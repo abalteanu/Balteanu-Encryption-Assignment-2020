@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1600555673 source:c:\users\amazia\documents\anacomp12\balteanuencryption\main.cpp
+	<iostream>
+	<fstream>
+	<iomanip>
+	<string.h>
+
